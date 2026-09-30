@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para Wells 💙</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    overflow:hidden;
+    background:#020713;
+    font-family:Arial,sans-serif;
+}
+
+#scene{
+    position:fixed;
+    inset:0;
+}
+
+.message{
+    position:fixed;
+    z-index:10;
+    top:8%;
+    left:50%;
+    transform:translateX(-50%);
+    width:90%;
+    max-width:600px;
+    text-align:center;
+    color:white;
+    pointer-events:none;
+}
+
+.message h1{
+    font-size:clamp(35px,9vw,70px);
+    color:#55c9ff;
+    text-shadow:
+        0 0 10px #009dff,
+        0 0 25px #009dff,
+        0 0 50px #006cff;
+    animation:pulse 2s infinite;
+}
+
+.message p{
+    margin-top:15px;
+    font-size:clamp(17px,4vw,25px);
+    line-height:1.5;
+    text-shadow:0 0 10px #008cff;
+}
+
+.message .love{
+    color:#75d5ff;
+    font-weight:bold;
+}
+
+@keyframes pulse{
+    50%{
+        transform:scale(1.05);
+    }
+}
+
+#start{
+    position:fixed;
+    z-index:20;
+    left:50%;
+    bottom:35px;
+    transform:translateX(-50%);
+    padding:14px 28px;
+    border:none;
+    border-radius:30px;
+    background:#079cff;
+    color:white;
+    font-size:17px;
+    box-shadow:0 0 25px #008cff;
+}
+</style>
+</head>
+
+<body>
+
+<div id="scene"></div>
+
+<div class="message">
+    <h1>WELLS 💙</h1>
+
+    <p>
+        Feliz Día de Hot Wheels 🚗🔥
+    </p>
+
+    <p>
+        Hoy quiero recordarte lo mucho que
+        <span class="love">te amo</span>.
+        <br>
+        Eres alguien muy especial para mí.
+    </p>
+
+    <p>
+        Quiero seguir recorriendo muchos caminos
+        contigo y compartir muchísimos momentos.
+        💙
+    </p>
+
+    <p class="love">
+        Nunca quiero dejarte.
+    </p>
+</div>
+
+<button id="start">💙 Entrar</button>
+
+<script type="module">
+
+import * as THREE from
+'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
+
+const scene = new THREE.Scene();
+
+scene.background = new THREE.Color(0x020713);
+
+scene.fog = new THREE.FogExp2(
+    0x020713,
+    0.018
+);
+
+/* CÁMARA */
+
+const camera = new THREE.PerspectiveCamera(
+    60,
+    innerWidth / innerHeight,
+    0.1,
+    500
+);
+
+camera.position.set(
+    0,
+    7,
+    18
+);
+
+camera.lookAt(
+    0,
+    0,
+    -20
+);
+
+/* RENDER */
+
+const renderer = new THREE.WebGLRenderer({
+    antialias:true
+});
+
+renderer.setPixelRatio(
+    Math.min(devicePixelRatio,2)
+);
+
+renderer.setSize(
+    innerWidth,
+    innerHeight
+);
+
+renderer.shadowMap.enabled = true;
+
+document
+.getElementById("scene")
+.appendChild(renderer.domElement);
+
+
+/* LUCES */
+
+const ambient = new THREE.AmbientLight(
+    0x6dbbff,
+    1.5
+);
+
+scene.add(ambient);
+
+const blueLight = new THREE.PointLight(
+    0x008cff,
+    100,
+    100
+);
+
+blueLight.position.set(
+    0,
+    8,
+    5
+);
+
+scene.add(blueLight);
+
+
+/* ESTRELLAS */
+
+const starGeometry =
+    new THREE.BufferGeometry();
+
+const starPositions = [];
+
+for(let i=0;i<900;i++){
+
+    starPositions.push(
+        (Math.random()-0.5)*150,
+        Math.random()*70,
+        -Math.random()*180
+    );
+
+}
+
+starGeometry.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(
+        starPositions,
+        3
+    )
+);
+
+const starMaterial =
+    new THREE.PointsMaterial({
+        color:0x8fdcff,
+        size:0.18
+    });
+
+const stars =
+    new THREE.Points(
+        starGeometry,
+        starMaterial
+    );
+
+scene.add(stars);
+
+
+/* PISTA */
+
+const roadGeometry =
+    new THREE.PlaneGeometry(
+        18,
+        180
+    );
+
+const roadMaterial =
+    new THREE.MeshStandardMaterial({
+        color:0x10151c,
+        roughness:0.8
+    });
+
+const road =
+    new THREE.Mesh(
+        roadGeometry,
+        roadMaterial
+    );
+
+road.rotation.x =
+    -Math.PI/2;
+
+road.position.y =
+    -1.5;
+
+road.position.z =
+    -55;
+
+road.receiveShadow = true;
+
+scene.add(road);
+
+
+/* BORDES DE LA PISTA */
+
+function createLine(x){
+
+    const geometry =
+        new THREE.BoxGeometry(
+            0.18,
+            0.08,
+            180
+        );
+
+    const material =
+        new THREE.MeshStandardMaterial({
+            color:0x28b9ff,
+            emissive:0x0077ff,
+            emissiveIntensity:2
+        });
+
+    const line =
+        new THREE.Mesh(
+            geometry,
+            material
+        );
+
+    line.position.set(
+        x,
+        -1.42,
+        -55
+    );
+
+    scene.add(line);
+}
+
+createLine(-8.5);
+createLine(8.5);
+
+
+/* LÍNEAS CENTRALES */
+
+for(let z=5;z>-170;z-=8){
+
+    const geometry =
+        new THREE.BoxGeometry(
+            0.25,
+            0.08,
+            4
+        );
+
+    const material =
+        new THREE.MeshStandardMaterial({
+            color:0xffffff,
+            emissive:0x555555
+        });
+
+    const line =
+        new THREE.Mesh(
+            geometry,
+            material
+        );
+
+    line.position.set(
+        0,
+        -1.40,
+        z
+    );
+
+    scene.add(line);
+}
+
+
+/* CREAR CARRO 3D */
+
+function createCar(
+    color,
+    x,
+    z,
+    scale=1
+){
+
+    const car =
+        new THREE.Group();
+
+    /* CARROCERÍA */
+
+    const bodyGeometry =
+        new THREE.BoxGeometry(
+            2.7,
+            0.55,
+            4.2
+        );
+
+    const bodyMaterial =
+        new THREE.MeshStandardMaterial({
+            color:color,
+            metalness:0.7,
+            roughness:0.25
+        });
+
+    const body =
+        new THREE.Mesh(
+            bodyGeometry,
+            bodyMaterial
+        );
+
+    body.position.y =
+        0.15;
+
+    body.castShadow = true;
+
+    car.add(body);
+
+
+    /* CABINA */
+
+    const cabinGeometry =
+        new THREE.BoxGeometry(
+            1.9,
+            0.65,
+            1.8
+        );
+
+    const cabinMaterial =
+        new THREE.MeshStandardMaterial({
+            color:0x101a2d,
+            metalness:0.4,
+            roughness:0.15
+        });
+
+    const cabin =
+        new THREE.Mesh(
+            cabinGeometry,
+            cabinMaterial
+        );
+
+    cabin.position.set(
+        0,
+        0.65,
+        -0.25
+    );
+
+    cabin.rotation.x =
+        -0.05;
+
+    car.add(cabin);
+
+
+    /* RUEDAS */
+
+    const wheelGeometry =
+        new THREE.CylinderGeometry(
+            0.45,
+            0.45,
+            0.35,
+            24
+        );
+
+    const wheelMaterial =
+        new THREE.MeshStandardMaterial({
+            color:0x050505,
+            roughness:0.7
+        });
+
+    const wheelPositions = [
+        [-1.25,0,-1.25],
+        [1.25,0,-1.25],
+        [-1.25,0,1.25],
+        [1.25,0,1.25]
+    ];
+
+    wheelPositions.forEach(pos=>{
+
+        const wheel =
+            new THREE.Mesh(
+                wheelGeometry,
+                wheelMaterial
+            );
+
+        wheel.rotation.z =
+            Math.PI/2;
+
+        wheel.position.set(
+            pos[0],
+            pos[1],
+            pos[2]
+        );
+
+        car.add(wheel);
+
+    });
+
+
+    /* LUCES DELANTERAS */
+
+    const lightGeometry =
+        new THREE.BoxGeometry(
+            0.5,
+            0.15,
+            0.1
+        );
+
+    const lightMaterial =
+        new THREE.MeshBasicMaterial({
+            color:0x9eeaff
+        });
+
+    [-0.75,0.75].forEach(x=>{
+
+        const light =
+            new THREE.Mesh(
+                lightGeometry,
+                lightMaterial
+            );
+
+        light.position.set(
+            x,
+            0.35,
+            -2.1
+        );
+
+        car.add(light);
+
+    });
+
+
+    car.position.set(
+        x,
+        -0.7,
+        z
+    );
+
+    car.scale.setScalar(scale);
+
+    scene.add(car);
+
+    return car;
+}
+
+
+/* VARIOS CARROS */
+
+const cars = [
+
+    createCar(
+        0xff1744,
+        -4,
+        2,
+        0.8
+    ),
+
+    createCar(
+        0x009dff,
+        3,
+        -20,
+        0.9
+    ),
+
+    createCar(
+        0xff8c00,
+        -2,
+        -45,
+        0.7
+    ),
+
+    createCar(
+        0x9c27ff,
+        4,
+        -70,
+        0.85
+    ),
+
+    createCar(
+        0x00e676,
+        -4,
+        -95,
+        0.75
+    )
+];
+
+
+/* FLORES AZULES 3D */
+
+function createFlower(
+    x,
+    y,
+    z
+){
+
+    const group =
+        new THREE.Group();
+
+    const center =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                0.25,
+                16,
+                16
+            ),
+            new THREE.MeshStandardMaterial({
+                color:0xffdf45,
+                emissive:0xffaa00,
+                emissiveIntensity:0.4
+            })
+        );
+
+    group.add(center);
+
+
+    for(let i=0;i<6;i++){
+
+        const angle =
+            (Math.PI*2/6)*i;
+
+        const petal =
+            new THREE.Mesh(
+                new THREE.SphereGeometry(
+                    0.45,
+                    16,
+                    16
+                ),
+                new THREE.MeshStandardMaterial({
+                    color:0x168cff,
+                    emissive:0x006cff,
+                    emissiveIntensity:0.5
+                })
+            );
+
+        petal.position.x =
+            Math.cos(angle)*0.5;
+
+        petal.position.z =
+            Math.sin(angle)*0.5;
+
+        petal.scale.set(
+            0.8,
+            0.25,
+            1
+        );
+
+        group.add(petal);
+    }
+
+    group.position.set(
+        x,y,z
+    );
+
+    scene.add(group);
+
+    return group;
+}
+
+
+/* MUCHAS FLORES */
+
+const flowers=[];
+
+for(let i=0;i<35;i++){
+
+    flowers.push(
+        createFlower(
+            (Math.random()-0.5)*18,
+            Math.random()*7-1,
+            -Math.random()*120
+        )
+    );
+
+}
+
+
+/* CORAZONES 3D */
+
+const hearts=[];
+
+for(let i=0;i<20;i++){
+
+    const geometry =
+        new THREE.SphereGeometry(
+            0.3,
+            12,
+            12
+        );
+
+    const material =
+        new THREE.MeshStandardMaterial({
+            color:0x35baff,
+            emissive:0x008cff,
+            emissiveIntensity:1
+        });
+
+    const heart =
+        new THREE.Mesh(
+            geometry,
+            material
+        );
+
+    heart.position.set(
+        (Math.random()-0.5)*16,
+        Math.random()*7,
+        -Math.random()*100
+    );
+
+    heart.scale.set(
+        1,
+        1.3,
+        0.6
+    );
+
+    scene.add(heart);
+
+    hearts.push(heart);
+}
+
+
+/* ANIMACIÓN */
+
+const clock =
+    new THREE.Clock();
+
+function animate(){
+
+    requestAnimationFrame(
+        animate
+    );
+
+    const time =
+        clock.getElapsedTime();
+
+
+    /* Movimiento de carros */
+
+    cars.forEach(
+        (car,index)=>{
+
+            car.position.z +=
+                0.045 + index*0.008;
+
+            car.rotation.y =
+                Math.sin(time*2+index)*0.02;
+
+            if(car.position.z>12){
+
+                car.position.z =
+                    -110 - Math.random()*40;
+
+            }
+
+        }
+    );
+
+
+    /* Flores */
+
+    flowers.forEach(
+        (flower,index)=>{
+
+            flower.position.y +=
+                Math.sin(
+                    time*1.5+index
+                )*0.002;
+
+            flower.rotation.y +=
+                0.008;
+
+        }
+    );
+
+
+    /* Corazones */
+
+    hearts.forEach(
+        (heart,index)=>{
+
+            heart.position.y +=
+                Math.sin(
+                    time*1.5+index
+                )*0.008;
+
+            heart.rotation.y +=
+                0.01;
+
+        }
+    );
+
+
+    /* Estrellas */
+
+    stars.rotation.y =
+        time*0.003;
+
+
+    renderer.render(
+        scene,
+        camera
+    );
+}
+
+animate();
+
+
+/* BOTÓN */
+
+document
+.getElementById("start")
+.onclick=()=>{
+
+    document
+    .getElementById("start")
+    .style.display="none";
+
+    camera.position.z=16;
+
+};
+
+
+/* RESPONSIVE */
+
+window.addEventListener(
+    "resize",
+    ()=>{
+
+        camera.aspect =
+            innerWidth/innerHeight;
+
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(
+            innerWidth,
+            innerHeight
+        );
+
+    }
+);
+
+</script>
+
+</body>
+</html>
